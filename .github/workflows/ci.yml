@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # Everything except Sqlm.App's real Windows build. Sqlm.App itself still builds here too
+  # (EnableWindowsTargeting cross-compiles it, PLAN.md §13), which catches C#-level breakage
+  # early; the `windows` job below is what proves it actually links and runs as a Windows exe.
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: dotnet restore (locked mode)
+        run: dotnet restore --locked-mode
+
+      - name: dotnet build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: dotnet test
+        run: dotnet test --no-build --configuration Release
+
+      - name: Verify generated TS contracts are checked in and current
+        run: |
+          dotnet run --project tools/Sqlm.ContractsGen -- src/renderer/src/rpc/contracts.d.ts
+          git diff --exit-code -- src/renderer/src/rpc/contracts.d.ts || {
+            echo "::error::src/renderer/src/rpc/contracts.d.ts is stale — run the generator and commit the result (PLAN.md §12)."
+            exit 1
+          }
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package-json: src/renderer/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: src/renderer/package.json
+
+      - name: pnpm install (frozen lockfile)
+        working-directory: src/renderer
+        run: pnpm install --frozen-lockfile
+
+      - name: Reject non-exact npm version specifiers (PLAN.md §2.2)
+        working-directory: src/renderer
+        run: |
+          if grep -RE '"[a-zA-Z@][^"]*":\s*"[\^~*]' package.json; then
+            echo "::error::package.json has a non-exact version specifier (^, ~, or *) — pin exact versions."
+            exit 1
+          fi
+
+      - name: pnpm lint
+        working-directory: src/renderer
+        run: pnpm lint
+
+      - name: pnpm build
+        working-directory: src/renderer
+        run: pnpm build
+
+      - name: Reject remote asset references in the built renderer (PLAN.md §2.2)
+        working-directory: src/renderer
+        run: |
+          if grep -RE '(src|href)=["'"'"']https?://|url\(https?://|fetch\(.https?://' dist --include='*.html' --include='*.js' --include='*.css'; then
+            echo "::error::the renderer bundle references a remote asset — it must be fully self-contained."
+            exit 1
+          fi
+
+  # Confirms Sqlm.App actually builds on a real Windows toolchain, not just via
+  # EnableWindowsTargeting cross-compilation (PLAN.md §13: WPF + WebView2 are Windows-only).
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: dotnet build Sqlm.App (win-x64)
+        run: dotnet build src/Sqlm.App/Sqlm.App.csproj --configuration Release --runtime win-x64

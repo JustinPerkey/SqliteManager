@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- This project only ships for win-x64 (PLAN.md §2.2), but the SDK still needs to restore
+         and build it here so the Linux devcontainer's `dotnet build` covers the whole solution. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sqlm.Core\Sqlm.Core.csproj" />
+    <ProjectReference Include="..\Sqlm.Contracts\Sqlm.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" />
+  </ItemGroup>
+
+  <!-- Vite build output -> $(OutDir)renderer, so MainWindow's SetVirtualHostNameToFolderMapping
+       finds it next to the exe (PLAN.md §2.2). No-op until `src/renderer` has a dist/ to copy. -->
+  <Target Name="CopyRendererAssets" AfterTargets="Build" Condition="Exists('$(MSBuildThisFileDirectory)..\renderer\dist')">
+    <ItemGroup>
+      <RendererAssets Include="$(MSBuildThisFileDirectory)..\renderer\dist\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RendererAssets)" DestinationFolder="$(OutDir)renderer\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- Regenerates renderer/src/rpc/contracts.d.ts from Sqlm.Contracts on every build, so the
+       TypeScript side of the RPC bridge cannot drift (PLAN.md §4.2, §12). CI additionally diffs
+       the result against what's checked in and fails on any mismatch. Lives here rather than on
+       Sqlm.Contracts.csproj: Sqlm.ContractsGen references Sqlm.Contracts, so a target on
+       Sqlm.Contracts itself would re-trigger every time the generator's own build restores it.
+       Sqlm.App is a safe, non-cyclic anchor — nothing in the generator's dependency chain builds it. -->
+  <Target Name="GenerateTsContracts" AfterTargets="Build">
+    <Exec Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)..\..\tools\Sqlm.ContractsGen&quot; -- &quot;$(MSBuildThisFileDirectory)..\renderer\src\rpc\contracts.d.ts&quot;" />
+  </Target>
+
+</Project>

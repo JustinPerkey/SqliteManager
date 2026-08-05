@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sqlm.App/Sqlm.App.csproj" />
+    <Project Path="src/Sqlm.Cli/Sqlm.Cli.csproj" />
+    <Project Path="src/Sqlm.Contracts/Sqlm.Contracts.csproj" />
+    <Project Path="src/Sqlm.Core/Sqlm.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sqlm.Core.Tests/Sqlm.Core.Tests.csproj" />
+    <Project Path="tests/Sqlm.E2E.Tests/Sqlm.E2E.Tests.csproj" />
+    <Project Path="tests/Sqlm.Fidelity.Tests/Sqlm.Fidelity.Tests.csproj" />
+    <Project Path="tests/Sqlm.Scale.Tests/Sqlm.Scale.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Sqlm.ContractsGen/Sqlm.ContractsGen.csproj" />
+  </Folder>
+</Solution>
