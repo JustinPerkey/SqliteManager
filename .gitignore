@@ -12,6 +12,7 @@ dotnet/runfile-discovery/
 # Node / renderer
 node_modules/
 dist/
+.pnpm-store/
 
 # Claude Code local settings
 .claude/

@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+
+/* Theme tokens, following the OS preference (PLAN.md §9). The WebView2 host has no control over
+   the OS theme, so this is the only source of truth — no theme toggle in v1. */
+:root {
+  color-scheme: light dark;
+
+  --sqlm-bg: #ffffff;
+  --sqlm-bg-inset: #f4f4f5;
+  --sqlm-fg: #09090b;
+  --sqlm-fg-muted: #71717a;
+  --sqlm-border: #e4e4e7;
+  --sqlm-accent: #6d28d9;
+  --sqlm-accent-fg: #ffffff;
+  --sqlm-warning: #b45309;
+  --sqlm-danger: #b91c1c;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sqlm-bg: #0b0b0d;
+    --sqlm-bg-inset: #17171a;
+    --sqlm-fg: #f4f4f5;
+    --sqlm-fg-muted: #a1a1aa;
+    --sqlm-border: #27272a;
+    --sqlm-accent: #a78bfa;
+    --sqlm-accent-fg: #1e1033;
+    --sqlm-warning: #fbbf24;
+    --sqlm-danger: #f87171;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--sqlm-bg);
+  color: var(--sqlm-fg);
+}

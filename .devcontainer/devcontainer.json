@@ -17,7 +17,8 @@
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "moby": false
-    }
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
 
   "remoteEnv": {
@@ -47,7 +48,7 @@
         "anthropic.claude-code"
       ],
       "settings": {
-        "dotnet.defaultSolution": "SqliteManager.sln",
+        "dotnet.defaultSolution": "SqliteManager.slnx",
         "editor.formatOnSave": true
       }
     }

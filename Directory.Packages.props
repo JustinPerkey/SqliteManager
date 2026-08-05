@@ -1,0 +1,19 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <!-- Pinned to the last MIT-licensed release before the Xceed acquisition — 8.x requires a
+         paid commercial license (see the runtime warning it prints), which doesn't fit a
+         commercial product's test suite. -->
+    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
+    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
+    <PackageVersion Include="System.CommandLine" Version="3.0.0-preview.6.26359.118" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.13.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+</Project>
