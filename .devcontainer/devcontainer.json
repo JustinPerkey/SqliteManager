@@ -3,7 +3,12 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/SqliteManager",
-
+ "mounts": [
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+  ],
+  "containerEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
   "features": {
     "ghcr.io/devcontainers/features/dotnet:2": {
       "version": "10.0",

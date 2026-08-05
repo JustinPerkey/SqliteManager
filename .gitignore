@@ -12,3 +12,6 @@ dotnet/runfile-discovery/
 # Node / renderer
 node_modules/
 dist/
+
+# Claude Code local settings
+.claude/
